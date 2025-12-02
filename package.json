@@ -1,0 +1,22 @@
+{
+  "name": "elf-economy-tycoon",
+  "version": "1.0.0",
+  "description": "Christmas elf-themed tycoon game",
+  "main": "index.js",
+  "scripts": {
+    "dev": "bunx --bun vite",
+    "build": "bun run tsc && bunx --bun vite build",
+    "preview": "bunx --bun vite preview"
+  },
+  "keywords": ["phaser", "game", "tycoon", "christmas"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.2",
+    "vite": "^5.0.2"
+  },
+  "dependencies": {
+    "phaser": "^3.70.0"
+  }
+}
