@@ -7,7 +7,7 @@ export class ChristmasTree {
   private y: number;
   private cooldown: number = 0;
   private maxCooldown: number = 20000; // 20 seconds between shakes
-  private coinValue: number = 3; // 3 coins per drop
+  private coinValue: number = 3; // Reduced from 12 to 3
   private cooldownBar?: Phaser.GameObjects.Graphics;
   private promptText?: Phaser.GameObjects.Text;
   private onCoinDrop: (x: number, y: number, value: number) => void;
@@ -36,8 +36,8 @@ export class ChristmasTree {
     // Tree layers (green triangles)
     this.sprite.fillStyle(0x2d5016, 1);
     this.sprite.fillTriangle(this.x, this.y - 80, this.x - 40, this.y - 40, this.x + 40, this.y - 40);
-    this.sprite.fillTriangle(this.x, this.y - 60, this.x - 50, this.y - 20, this.x + 50, this.y - 20);
-    this.sprite.fillTriangle(this.x, this.y - 40, this.x - 60, this.y, this.x + 60, this.y);
+    this.sprite.fillTriangle(this.x, this.y - 60, this.x - 50, this.y - 60, this.x + 50, this.y - 60);
+    this.sprite.fillTriangle(this.x, this.y - 40, this.x - 60, this.y - 40, this.x + 60, this.y - 40);
     
     // Trunk
     this.sprite.fillStyle(0x8b4513, 1);
@@ -50,10 +50,11 @@ export class ChristmasTree {
     // Ornaments
     const ornamentColors = [0xff0000, 0x0000ff, 0xffd700, 0xff69b4];
     for (let i = 0; i < 8; i++) {
-      const ox = this.x + Phaser.Math.Between(-35, 35);
-      const oy = this.y + Phaser.Math.Between(-70, -10);
+      const angle = (i / 8) * Math.PI * 2;
+      const ornamentX = this.x + Math.cos(angle) * 35;
+      const ornamentY = this.y - 60 + Math.sin(angle) * 30;
       this.sprite.fillStyle(ornamentColors[i % ornamentColors.length], 1);
-      this.sprite.fillCircle(ox, oy, 5);
+      this.sprite.fillCircle(ornamentX, ornamentY, 4);
     }
 
     // Make it interactive
@@ -79,7 +80,8 @@ export class ChristmasTree {
         targets: this.sprite,
         scaleX: 1,
         scaleY: 1,
-        duration: 200
+        duration: 200,
+        ease: 'Back.out'
       });
     });
   }
@@ -90,9 +92,7 @@ export class ChristmasTree {
       color: '#ffd700',
       fontStyle: 'bold',
       stroke: '#000000',
-      strokeThickness: 3,
-      backgroundColor: '#2d5016',
-      padding: { x: 8, y: 4 }
+      strokeThickness: 3
     });
     this.promptText.setOrigin(0.5);
     this.promptText.setDepth(10);
@@ -111,72 +111,6 @@ export class ChristmasTree {
   private createCooldownBar() {
     this.cooldownBar = this.scene.add.graphics();
     this.cooldownBar.setDepth(10);
-  }
-
-  private shake() {
-    if (this.cooldown > 0) return; // Still on cooldown
-
-    // Start cooldown
-    this.cooldown = this.maxCooldown;
-
-    // Hide prompt during cooldown
-    if (this.promptText) {
-      this.promptText.setVisible(false);
-    }
-
-    // Shake animation
-    const originalX = this.sprite.x;
-    this.scene.tweens.add({
-      targets: this.sprite,
-      x: originalX - 5,
-      duration: 50,
-      yoyo: true,
-      repeat: 5,
-      ease: 'Sine.inOut'
-    });
-
-    // Create particle effect
-    this.createShakeParticles();
-
-// Drop coins - just 2 coins per shake for slow progression
-    const coinCount = 2;
-    console.log(`[TREE] Shaking tree, dropping ${coinCount} coins of ${this.coinValue} value each = ${coinCount * this.coinValue} total`);
-    for (let i = 0; i < coinCount; i++) {
-      const offsetX = Phaser.Math.Between(-30, 30);
-      const offsetY = Phaser.Math.Between(-20, 20);
-      
-      this.scene.time.delayedCall(i * 100, () => {
-        console.log(`[TREE] Dropping coin ${i+1} with value ${this.coinValue}`);
-        this.onCoinDrop(this.x + offsetX, this.y + offsetY, this.coinValue);
-      });
-    }
-    
-    // Visual feedback
-    this.scene.tweens.add({
-      targets: this.sprite,
-      scaleX: 0.95,
-      scaleY: 1.05,
-      duration: 100,
-      yoyo: true,
-      repeat: 1,
-      ease: 'Sine.inOut'
-    });
-    
-    // Play tree shake sound
-    if (this.scene && (this.scene as any).audioManager) {
-      (this.scene as any).audioManager.playTreeShakeSound();
-    }
-    }
-
-    // Visual feedback
-    this.scene.tweens.add({
-      targets: this.sprite,
-      scaleX: 0.95,
-      scaleY: 1.05,
-      duration: 100,
-      yoyo: true,
-      repeat: 2
-    });
   }
 
   private createShakeParticles() {
@@ -212,6 +146,56 @@ export class ChristmasTree {
     
     this.scene.time.delayedCall(800, () => {
       sparkles.destroy();
+    });
+  }
+
+  private shake() {
+    if (this.cooldown > 0) return; // Still on cooldown
+
+    // Start cooldown
+    this.cooldown = this.maxCooldown;
+
+    // Hide prompt during cooldown
+    if (this.promptText) {
+      this.promptText.setVisible(false);
+    }
+
+    // Shake animation
+    const originalX = this.sprite.x;
+    this.scene.tweens.add({
+      targets: this.sprite,
+      x: originalX - 5,
+      duration: 50,
+      yoyo: true,
+      repeat: 5,
+      ease: 'Sine.inOut'
+    });
+
+    // Create particle effect
+    this.createShakeParticles();
+
+    // Drop coins - just 2 coins per shake for slow progression
+    const coinCount = 2;
+    console.log(`[TREE] Shaking tree, dropping ${coinCount} coins of ${this.coinValue} value each = ${coinCount * this.coinValue} total`);
+    for (let i = 0; i < coinCount; i++) {
+      const offsetX = Phaser.Math.Between(-30, 30);
+      const offsetY = Phaser.Math.Between(-20, 20);
+      
+      this.scene.time.delayedCall(i * 100, () => {
+        console.log(`[TREE] Dropping coin ${i+1} with value ${this.coinValue}`);
+        this.onCoinDrop(this.x + offsetX, this.y + offsetY, this.coinValue);
+      });
+    }
+    
+    // Visual feedback
+    this.scene.tweens.add({
+      targets: this.sprite,
+      scaleX: 0.95,
+      scaleY: 1.05,
+      duration: 100,
+      yoyo: true,
+      repeat: 1,
+      ease: 'Sine.inOut'
     });
   }
 
@@ -251,114 +235,6 @@ export class ChristmasTree {
         }
       }
     }
-  }
-
-  private createShakeParticles() {
-    // Enhanced snowflakes and magical particles
-    const particles = this.scene.add.particles(this.x, this.y - 40, 'snowflake', {
-      speed: { min: 50, max: 100 },
-      angle: { min: 60, max: 120 },
-      scale: { start: 0.8, end: 0.3 },
-      alpha: { start: 1, end: 0 },
-      lifespan: 600,
-      quantity: 15,
-      gravityY: 200
-    });
-    
-    // Add magical sparkles
-    const sparkles = this.scene.add.particles(this.x, this.y - 40, 'star', {
-      speed: { min: 30, max: 80 },
-      angle: { min: 0, max: 360 },
-      scale: { start: 0.2, end: 0 },
-      alpha: { start: 0.8, end: 0 },
-      lifespan: 800,
-      quantity: 8,
-      tint: 0x00ffff,
-      blendMode: 'ADD'
-    });
-    
-    particles.setDepth(15);
-    sparkles.setDepth(16);
-    
-    this.scene.time.delayedCall(600, () => {
-      particles.destroy();
-    });
-    
-    this.scene.time.delayedCall(800, () => {
-      sparkles.destroy();
-    });
-  }
-
-  private createShakeParticles() {
-    // Enhanced snowflakes and magical particles
-    const particles = this.scene.add.particles(this.x, this.y - 40, 'snowflake', {
-      speed: { min: 50, max: 100 },
-      angle: { min: 60, max: 120 },
-      scale: { start: 0.8, end: 0.3 },
-      alpha: { start: 1, end: 0 },
-      lifespan: 600,
-      quantity: 15,
-      gravityY: 200
-    });
-    
-    // Add magical sparkles
-    const sparkles = this.scene.add.particles(this.x, this.y - 40, 'star', {
-      speed: { min: 30, max: 80 },
-      angle: { min: 0, max: 360 },
-      scale: { start: 0.2, end: 0 },
-      alpha: { start: 0.8, end: 0 },
-      lifespan: 800,
-      quantity: 8,
-      tint: 0x00ffff,
-      blendMode: 'ADD'
-    });
-    
-    particles.setDepth(15);
-    sparkles.setDepth(16);
-    
-    this.scene.time.delayedCall(600, () => {
-      particles.destroy();
-    });
-    
-    this.scene.time.delayedCall(800, () => {
-      sparkles.destroy();
-    });
-  }
-
-  private createShakeParticles() {
-    // Enhanced snowflakes and magical particles
-    const particles = this.scene.add.particles(this.x, this.y - 40, 'snowflake', {
-      speed: { min: 50, max: 100 },
-      angle: { min: 60, max: 120 },
-      scale: { start: 0.8, end: 0.3 },
-      alpha: { start: 1, end: 0 },
-      lifespan: 600,
-      quantity: 15,
-      gravityY: 200
-    });
-    
-    // Add magical sparkles
-    const sparkles = this.scene.add.particles(this.x, this.y - 40, 'star', {
-      speed: { min: 30, max: 80 },
-      angle: { min: 0, max: 360 },
-      scale: { start: 0.2, end: 0 },
-      alpha: { start: 0.8, end: 0 },
-      lifespan: 800,
-      quantity: 8,
-      tint: 0x00ffff,
-      blendMode: 'ADD'
-    });
-    
-    particles.setDepth(15);
-    sparkles.setDepth(16);
-    
-    this.scene.time.delayedCall(600, () => {
-      particles.destroy();
-    });
-    
-    this.scene.time.delayedCall(800, () => {
-      sparkles.destroy();
-    });
   }
 
   destroy() {
