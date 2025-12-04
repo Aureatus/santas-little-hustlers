@@ -19,7 +19,11 @@ import { DecorationSystem } from '../systems/DecorationSystem';
 import { AssetCreator } from '../utils/AssetCreator';
 import { EnvironmentRenderer } from '../rendering/EnvironmentRenderer';
 
+const WORLD_WIDTH = 4096;
+const WORLD_HEIGHT = 3072;
+
 export class GameScene extends Phaser.Scene {
+
   private player!: Player;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private wasd!: any;
@@ -72,7 +76,7 @@ export class GameScene extends Phaser.Scene {
     this.audioManager = new AudioManager(this);
     this.researchSystem = new ResearchSystem();
     this.buffSystem = new BuffSystem(this);
-    this.gridSystem = new GridSystem(this, 1024, 768); // Match playfield size
+    this.gridSystem = new GridSystem(this, WORLD_WIDTH, WORLD_HEIGHT);
     this.decorationSystem = new DecorationSystem(this);
     
     // Initialize audio
@@ -80,11 +84,12 @@ export class GameScene extends Phaser.Scene {
     console.log('GameScene: Systems initialized');
     
     // Render environment
-    this.environmentRenderer = new EnvironmentRenderer(this);
+    this.environmentRenderer = new EnvironmentRenderer(this, WORLD_WIDTH, WORLD_HEIGHT);
     this.environmentRenderer.createBackground();
-    this.environmentRenderer.createBorder();
     this.environmentRenderer.createSnowEffect();
     console.log('GameScene: Environment rendered');
+    
+    this.physics.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
     
     // Load or initialize workshop layout
     this.loadGame();
@@ -95,6 +100,9 @@ export class GameScene extends Phaser.Scene {
     
     // Create player
     this.player = new Player(this, 512, 384);
+    this.cameras.main.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+    this.cameras.main.startFollow(this.player.sprite, true, 0.08, 0.08);
+    this.cameras.main.setBackgroundColor(0x1b3b5a);
     
     // Setup controls
     this.setupControls();
