@@ -8,8 +8,10 @@ import { SaveManager, SaveData } from '../utils/SaveManager';
 import { AudioManager } from '../utils/AudioManager';
 import { UIManager } from '../ui/UIManager';
 import { BuildingInfoPanel } from '../ui/BuildingInfoPanel';
+import { ResearchPanel } from '../ui/ResearchPanel';
 import { EconomySystem } from '../systems/EconomySystem';
 import { WorkshopLayout, BuildingSpot, TreeSpot } from '../systems/WorkshopLayout';
+import { ResearchSystem } from '../systems/ResearchSystem';
 import { AssetCreator } from '../utils/AssetCreator';
 import { EnvironmentRenderer } from '../rendering/EnvironmentRenderer';
 
@@ -21,6 +23,7 @@ export class GameScene extends Phaser.Scene {
   // Systems
   private economy!: EconomySystem;
   private audioManager!: AudioManager;
+  private researchSystem!: ResearchSystem;
   
   // Buildings
   private buildingSpots: BuildingSpot[] = [];
@@ -35,6 +38,7 @@ export class GameScene extends Phaser.Scene {
   // UI
   private uiManager!: UIManager;
   private buildingInfoPanel!: BuildingInfoPanel;
+  private researchPanel!: ResearchPanel;
   
   // Collectibles
   private coinGroup!: Phaser.Physics.Arcade.Group;
@@ -56,6 +60,7 @@ export class GameScene extends Phaser.Scene {
     // Initialize systems
     this.economy = new EconomySystem(50);
     this.audioManager = new AudioManager(this);
+    this.researchSystem = new ResearchSystem();
     console.log('GameScene: Systems initialized');
     
     // Render environment
@@ -107,6 +112,13 @@ export class GameScene extends Phaser.Scene {
       this,
       (building, cost) => this.upgradeBuilding(building, cost),
       () => this.economy.getCoins()
+    );
+    
+    this.researchPanel = new ResearchPanel(
+      this,
+      this.researchSystem,
+      (upgrade) => this.onResearchUpgradePurchased(upgrade),
+      () => this.onResearchPanelClosed()
     );
     
     // Create trees and planting spots
@@ -226,9 +238,13 @@ export class GameScene extends Phaser.Scene {
       );
       
       if (building.isRepaired()) {
-        // Setup click handler for repaired buildings - click sprite to show info
+        // Setup click handler for repaired buildings
         building.getSprite().on('pointerdown', () => {
-          this.buildingInfoPanel.show(building);
+          if (building.getType() === BuildingType.RESEARCH_LAB) {
+            this.openResearchPanel();
+          } else {
+            this.buildingInfoPanel.show(building);
+          }
         });
         this.economy.addBuilding(building);
       } else {
@@ -295,10 +311,17 @@ export class GameScene extends Phaser.Scene {
     this.uiManager.updateCoins(this.economy.getCoins());
     this.updateAffordabilityIndicators();
     
-    // Buildings spawn coins
+    // Buildings spawn coins or research points
     this.economy.getBuildings().forEach(building => {
       if (building.shouldSpawnCoin()) {
-        this.spawnCoinAt(building.x, building.y);
+        if (building.getType() === BuildingType.RESEARCH_LAB) {
+          // Generate research points
+          this.researchSystem.addResearchPoints(1);
+          this.uiManager.showFloatingText(building.x, building.y, '+1 RP', '#00ffff');
+        } else {
+          // Generate regular coins
+          this.spawnCoinAt(building.x, building.y);
+        }
       }
     });
   }
@@ -317,6 +340,7 @@ export class GameScene extends Phaser.Scene {
     this.uiManager.updateCoins(this.economy.getCoins());
     this.uiManager.updateIncome(this.economy.calculateIncome());
     this.uiManager.updateBuildingCount(this.getRepairedBuildingCount());
+    this.uiManager.updateResearchPoints(this.researchSystem.getResearchPoints());
     this.updateAffordabilityIndicators();
   }
 
@@ -383,6 +407,7 @@ export class GameScene extends Phaser.Scene {
           x: spot.x,
           y: spot.y
         })),
+      research: this.researchSystem.getSaveData(),
       totalEarned: this.economy.getTotalEarned(),
       lastSaveTime: Date.now()
     };
@@ -441,6 +466,11 @@ export class GameScene extends Phaser.Scene {
           b.level
         ])
       );
+      
+      // Load research data
+      if (saveData.research) {
+        this.researchSystem.loadSaveData(saveData.research);
+      }
       } catch (error) {
         console.error('Error loading save data, starting fresh:', error);
         // Clear corrupted save
@@ -487,5 +517,18 @@ export class GameScene extends Phaser.Scene {
     this.scene.restart();
     
     console.log('Game reset complete!');
+  }
+
+  private onResearchUpgradePurchased(upgrade: any) {
+    this.updateUI();
+    this.uiManager.showFloatingText(512, 200, 'Research Complete!', '#90EE90');
+  }
+
+  private onResearchPanelClosed() {
+    // Panel closed - no action needed
+  }
+
+  private openResearchPanel() {
+    this.researchPanel.show();
   }
 }

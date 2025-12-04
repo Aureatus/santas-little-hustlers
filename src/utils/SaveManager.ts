@@ -7,6 +7,12 @@ export interface SaveData {
     level: number;
     slotIndex: number;
   }[];
+  trees?: {
+    spotId: string;
+    x: number;
+    y: number;
+  }[];
+  research?: any;
   totalEarned: number;
   lastSaveTime: number;
 }

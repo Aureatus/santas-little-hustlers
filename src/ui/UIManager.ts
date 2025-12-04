@@ -5,6 +5,7 @@ export class UIManager {
   private coinsText!: Phaser.GameObjects.Text;
   private incomeText!: Phaser.GameObjects.Text;
   private buildingsCountText!: Phaser.GameObjects.Text;
+  private researchPointsText!: Phaser.GameObjects.Text;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -50,7 +51,18 @@ export class UIManager {
     this.buildingsCountText.setDepth(51);
     this.buildingsCountText.setScrollFactor(0);
     
-    const instructions = this.scene.add.text(512, 745, 'WASD: Move | Click Tree: Get Coins | Click Buildings: Repair/Upgrade', {
+    this.researchPointsText = this.scene.add.text(20, 110, `RP: 0`, {
+      fontSize: '18px',
+      color: '#00ffff',
+      fontStyle: 'bold',
+      stroke: '#000000',
+      strokeThickness: 2
+    });
+    this.researchPointsText.setOrigin(0, 0);
+    this.researchPointsText.setDepth(51);
+    this.researchPointsText.setScrollFactor(0);
+    
+    const instructions = this.scene.add.text(512, 745, 'WASD: Move | Click Tree: Get Coins | Click Buildings: Repair/Upgrade | Research Lab: Open Research', {
       fontSize: '16px',
       color: '#2d5016',
       backgroundColor: '#ffffff',
@@ -184,7 +196,11 @@ export class UIManager {
   }
 
   updateBuildingCount(count: number) {
-    this.buildingsCountText.setText(`Buildings: ${count}/10`);
+    this.buildingsCountText.setText(`Buildings: ${count}/11`);
+  }
+
+  updateResearchPoints(points: number) {
+    this.researchPointsText.setText(`RP: ${points}`);
   }
 
   showFloatingText(x: number, y: number, text: string, color: string) {

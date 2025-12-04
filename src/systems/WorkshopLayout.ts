@@ -37,7 +37,8 @@ export class WorkshopLayout {
     
     // Row 4 - Late game
     { id: 'elf_2', type: BuildingType.ELF_HOUSE, x: 670, y: 590, unlockOrder: 9, repaired: false },
-    { id: 'santas_office', type: BuildingType.SANTAS_OFFICE, x: 810, y: 600, unlockOrder: 10, repaired: false },
+    { id: 'research_lab', type: BuildingType.RESEARCH_LAB, x: 810, y: 600, unlockOrder: 10, repaired: false },
+    { id: 'santas_office', type: BuildingType.SANTAS_OFFICE, x: 950, y: 550, unlockOrder: 11, repaired: false },
   ];
 
   // Left side - Tree planting area (6 spots)

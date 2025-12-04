@@ -10,7 +10,8 @@ export enum BuildingType {
   STOCKING_STUFFER = 'stocking_stuffer',
   SNOWGLOBE_FACTORY = 'snowglobe_factory',
   ORNAMENT_WORKSHOP = 'ornament_workshop',
-  SANTAS_OFFICE = 'santas_office'
+  SANTAS_OFFICE = 'santas_office',
+  RESEARCH_LAB = 'research_lab'
 }
 
 export enum BuildingState {
@@ -96,6 +97,13 @@ export const BUILDING_DATA: Record<BuildingType, BuildingData> = {
     baseCost: 100000,
     baseIncome: 10000,
     description: 'The big man himself!'
+  },
+  [BuildingType.RESEARCH_LAB]: {
+    type: BuildingType.RESEARCH_LAB,
+    name: 'Research Lab',
+    baseCost: 15000,
+    baseIncome: 50,
+    description: 'Unlocks permanent upgrades'
   }
 };
 
