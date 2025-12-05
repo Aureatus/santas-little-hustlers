@@ -68,27 +68,21 @@ export class ChristmasTree {
     this.sprite.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains);
     this.sprite.on('pointerdown', () => this.shake());
     
-    // Hover effect
+    // Hover effect - highlight but don't move
     this.sprite.on('pointerover', () => {
       if (this.cooldown <= 0) {
         this.scene.tweens.add({
           targets: this.sprite,
-          scaleX: 1.05,
-          scaleY: 1.05,
-          duration: 200,
-          ease: 'Back.out'
+          alpha: 0.9,
+          duration: 150,
+          yoyo: true,
+          repeat: 0
         });
       }
     });
     
     this.sprite.on('pointerout', () => {
-      this.scene.tweens.add({
-        targets: this.sprite,
-        scaleX: 1,
-        scaleY: 1,
-        duration: 200,
-        ease: 'Back.out'
-      });
+      this.sprite.setAlpha(1);
     });
   }
 
