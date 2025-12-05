@@ -135,8 +135,16 @@ export class UIManager {
   }
 
   private showResetConfirmation(onConfirm: () => void) {
+    const { width, height } = this.scene.scale;
+
+    // Dark overlay to block interactions behind the dialog
+    const blocker = this.scene.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.45);
+    blocker.setDepth(299);
+    blocker.setScrollFactor(0);
+    blocker.setInteractive();
+
     // Create confirmation dialog
-    const container = this.scene.add.container(512, 384);
+    const container = this.scene.add.container(width / 2, height / 2);
     container.setDepth(300);
     container.setScrollFactor(0);
     
@@ -166,6 +174,7 @@ export class UIManager {
     const yesBtn = this.scene.add.rectangle(-100, 50, 150, 60, 0xc41e3a);
     yesBtn.setStrokeStyle(3, 0xff6347);
     yesBtn.setInteractive({ useHandCursor: true });
+    yesBtn.setScrollFactor(0);
     
     const yesText = this.scene.add.text(-100, 50, 'Yes, Reset', {
       fontSize: '20px',
@@ -186,14 +195,16 @@ export class UIManager {
     
     yesBtn.on('pointerdown', () => {
       container.destroy();
+      blocker.destroy();
       onConfirm();
-      this.showFloatingText(512, 300, 'Game Reset!', '#ff6347');
+      this.showFloatingText(width / 2, height / 2 - 80, 'Game Reset!', '#ff6347');
     });
     
     // No button
     const noBtn = this.scene.add.rectangle(100, 50, 150, 60, 0x2d5016);
     noBtn.setStrokeStyle(3, 0x90EE90);
     noBtn.setInteractive({ useHandCursor: true });
+    noBtn.setScrollFactor(0);
     
     const noText = this.scene.add.text(100, 50, 'Cancel', {
       fontSize: '20px',
@@ -214,6 +225,7 @@ export class UIManager {
     
     noBtn.on('pointerdown', () => {
       container.destroy();
+      blocker.destroy();
     });
     
     container.add([bg, border, title, message, yesBtn, yesText, noBtn, noText]);
