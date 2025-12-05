@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 
 export class AssetCreator {
   static createAllAssets(scene: Phaser.Scene) {

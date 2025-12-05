@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 import { BuffSystem, CookieType } from '../systems/BuffSystem';
 
 export class CookieShop {

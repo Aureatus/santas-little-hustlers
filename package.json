@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "bunx --bun vite",
     "build": "bun run tsc && bunx --bun vite build",
-    "preview": "bunx --bun vite preview"
+    "preview": "bunx --bun vite preview",
+    "build:exe": "mkdir -p dist && bun build src/main.ts --compile --outfile dist/elf_economy"
   },
   "keywords": ["phaser", "game", "tycoon", "christmas"],
   "author": "",

@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 import { ResearchSystem, ResearchUpgrade, ResearchCategory } from '../systems/ResearchSystem';
 
 const CATEGORY_DEFINITIONS: Array<{ key: ResearchCategory; label: string; icon: string }> = [

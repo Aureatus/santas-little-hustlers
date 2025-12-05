@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 
 export class Coin extends Phaser.Physics.Arcade.Sprite {
   private value: number = 10;

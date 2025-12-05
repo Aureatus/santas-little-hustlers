@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 import { Building, BuildingType, BuildingState, BUILDING_DATA } from '../entities/Building';
 import { Player } from '../entities/Player';
 import { Coin } from '../entities/Coin';

@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 
 export class Player {
   public sprite: Phaser.Physics.Arcade.Sprite;
