@@ -26,7 +26,7 @@ export class MiniMap {
 
     const screenWidth = this.scene.scale.width;
 
-    this.container = this.scene.add.container(screenWidth - this.width / 2 - 20, this.height / 2 + 20);
+    this.container = this.scene.add.container(screenWidth - this.width / 2 - 20, this.height / 2 + 120);
     this.container.setDepth(60);
     this.container.setScrollFactor(0);
 
