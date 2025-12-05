@@ -76,26 +76,51 @@ export class EnvironmentRenderer {
     // Subtle tile overlay (adds snow-plate variation under the grid)
     const tiles = this.scene.add.graphics();
     tiles.setDepth(0.1);
-    const tileSize = 64;
+    const tileSize = 96;
     for (let x = 0; x < this.width; x += tileSize) {
       for (let y = 0; y < this.height; y += tileSize) {
-        if ((x / tileSize + y / tileSize) % 2 === 0) {
-          tiles.fillStyle(0xffffff, 0.04);
-          tiles.fillRect(x, y, tileSize, tileSize);
-        }
+        const shade = Phaser.Math.FloatBetween(0.02, 0.06);
+        tiles.fillStyle(0xffffff, shade);
+        tiles.fillRoundedRect(x, y, tileSize, tileSize, 24);
       }
     }
 
-    // Draw grid pattern on top of the textured ground
+    // Random icy crystals
+    const crystals = this.scene.add.graphics();
+    crystals.setDepth(0.12);
+    for (let i = 0; i < 120; i++) {
+      crystals.fillStyle(0xffffff, Phaser.Math.FloatBetween(0.05, 0.18));
+      const cx = Phaser.Math.Between(-50, this.width + 50);
+      const cy = Phaser.Math.Between(0, this.height);
+      const cw = Phaser.Math.Between(20, 60);
+      const ch = Phaser.Math.Between(10, 25);
+      crystals.fillEllipse(cx, cy, cw, ch);
+    }
+
+    // Frosty noise speckles
+    const speckles = this.scene.add.graphics();
+    speckles.setDepth(0.14);
+    for (let i = 0; i < 400; i++) {
+      speckles.fillStyle(0xffffff, Phaser.Math.FloatBetween(0.05, 0.25));
+      speckles.fillCircle(
+        Phaser.Math.Between(0, this.width),
+        Phaser.Math.Between(0, this.height),
+        Phaser.Math.Between(1, 3)
+      );
+    }
+
+    // Draw grid pattern on top of the textured ground (very soft)
     const grid = this.scene.add.graphics();
-    grid.setDepth(0.2);
-    grid.lineStyle(1, 0xffffff, 0.08);
+    grid.setDepth(0.18);
+    grid.setBlendMode(Phaser.BlendModes.SOFT_LIGHT);
+    grid.lineStyle(1, 0xffffff, 0.03);
     for (let x = 0; x < this.width; x += 80) {
       grid.lineBetween(x, 0, x, this.height);
     }
     for (let y = 0; y < this.height; y += 80) {
       grid.lineBetween(0, y, this.width, y);
     }
+    grid.setAlpha(0.35);
   }
  
   createBorder() {
