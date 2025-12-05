@@ -18,7 +18,9 @@ export class UIManager {
     onSave: () => void,
     onReset: () => void,
     onAddTreeSpot?: () => void,
-    onAddBuildingSpot?: () => void
+    onAddBuildingSpot?: () => void,
+    getTreeCost?: () => number,
+    getBuildingCost?: () => number
   ) {
     const screenWidth = this.scene.scale.width;
 
@@ -119,14 +121,15 @@ export class UIManager {
     resetLabel.setScrollFactor(0);
     
     if (onAddTreeSpot) {
-      const addTreeBtn = this.scene.add.rectangle(screenWidth - 360, 35, 170, 35, 0x3c7526, 0.9);
+      const addTreeBtn = this.scene.add.rectangle(screenWidth - 360, 35, 180, 35, 0x3c7526, 0.9);
       addTreeBtn.setStrokeStyle(2, 0x1a3d14);
       addTreeBtn.setDepth(51);
       addTreeBtn.setScrollFactor(0);
       addTreeBtn.setInteractive({ useHandCursor: true });
       addTreeBtn.on('pointerdown', () => onAddTreeSpot());
 
-      const addTreeLabel = this.scene.add.text(screenWidth - 360, 35, '🌲 Add Tree', {
+      const treeLabelText = getTreeCost ? `🌲 Add Tree (${getTreeCost()}c)` : '🌲 Add Tree';
+      const addTreeLabel = this.scene.add.text(screenWidth - 360, 35, treeLabelText, {
         fontSize: '16px',
         color: '#ffffff',
         fontStyle: 'bold'
@@ -137,14 +140,15 @@ export class UIManager {
     }
     
     if (onAddBuildingSpot) {
-      const addBuildingBtn = this.scene.add.rectangle(screenWidth - 360, 75, 170, 35, 0x5b3d1f, 0.9);
+      const addBuildingBtn = this.scene.add.rectangle(screenWidth - 360, 75, 180, 35, 0x5b3d1f, 0.9);
       addBuildingBtn.setStrokeStyle(2, 0x2d1f0d);
       addBuildingBtn.setDepth(51);
       addBuildingBtn.setScrollFactor(0);
       addBuildingBtn.setInteractive({ useHandCursor: true });
       addBuildingBtn.on('pointerdown', () => onAddBuildingSpot());
 
-      const addBuildingLabel = this.scene.add.text(screenWidth - 360, 75, '🏗️ Add Building', {
+      const buildingLabelText = getBuildingCost ? `🏗️ Add Building (${getBuildingCost()}c)` : '🏗️ Add Building';
+      const addBuildingLabel = this.scene.add.text(screenWidth - 360, 75, buildingLabelText, {
         fontSize: '16px',
         color: '#ffffff',
         fontStyle: 'bold'

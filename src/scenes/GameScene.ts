@@ -137,8 +137,11 @@ export class GameScene extends Phaser.Scene {
       () => this.saveGame(),
       () => this.resetGame(),
       () => this.requestNewTreeSpot(),
-      () => this.requestNewBuildingSpot()
+      () => this.requestNewBuildingSpot(),
+      () => this.getNextTreeSpotCost(),
+      () => this.getBuildingPlotCost(this.peekNextBuildingType())
     );
+
     
     this.buildingInfoPanel = new BuildingInfoPanel(
       this,
@@ -636,6 +639,10 @@ export class GameScene extends Phaser.Scene {
     const type = BUILDING_SEQUENCE[this.nextBuildingSequenceIndex % BUILDING_SEQUENCE.length];
     this.nextBuildingSequenceIndex = (this.nextBuildingSequenceIndex + 1) % BUILDING_SEQUENCE.length;
     return type;
+  }
+
+  private peekNextBuildingType(): BuildingType {
+    return BUILDING_SEQUENCE[this.nextBuildingSequenceIndex % BUILDING_SEQUENCE.length];
   }
 
   private getBuildingPlotCost(type: BuildingType): number {
