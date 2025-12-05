@@ -187,7 +187,7 @@ export class GameScene extends Phaser.Scene {
 
     const magnetResearchLevel = this.researchSystem.getMagnetResearchLevel();
     const hasMagnetBuff = this.buffSystem.hasBuffOfType(BuffType.MAGNETIC_PULL);
-    const magnetStrength = hasMagnetBuff ? Math.max(magnetResearchLevel, 2) : magnetResearchLevel;
+    const magnetStrength = magnetResearchLevel + (hasMagnetBuff ? 3 : 0);
     const magnetActive = magnetStrength > 0;
 
     if (magnetActive) {
@@ -196,6 +196,7 @@ export class GameScene extends Phaser.Scene {
       this.resetMagnetizedCoins();
     }
     this.magnetActiveLastFrame = magnetActive;
+
 
     if (this.miniMap) {
       this.miniMap.update(this.player.sprite, this.trees, this.buildings);
