@@ -6,6 +6,10 @@ export class UIManager {
   private incomeText!: Phaser.GameObjects.Text;
   private buildingsCountText!: Phaser.GameObjects.Text;
   private researchPointsText!: Phaser.GameObjects.Text;
+  private addTreeLabel?: Phaser.GameObjects.Text;
+  private addBuildingLabel?: Phaser.GameObjects.Text;
+  private treeCostProvider?: () => number;
+  private buildingCostProvider?: () => number;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -23,8 +27,11 @@ export class UIManager {
     getBuildingCost?: () => number
   ) {
     const screenWidth = this.scene.scale.width;
+    this.treeCostProvider = getTreeCost;
+    this.buildingCostProvider = getBuildingCost;
 
     const uiBackground = this.scene.add.rectangle(10, 10, 280, 110, 0x2d5016, 0.9);
+
     uiBackground.setOrigin(0, 0);
     uiBackground.setDepth(50);
     uiBackground.setScrollFactor(0);
@@ -128,16 +135,36 @@ export class UIManager {
       addTreeBtn.setInteractive({ useHandCursor: true });
       addTreeBtn.on('pointerdown', () => onAddTreeSpot());
 
-      const treeLabelText = getTreeCost ? `🌲 Add Tree (${getTreeCost()}c)` : '🌲 Add Tree';
-      const addTreeLabel = this.scene.add.text(screenWidth - 360, 35, treeLabelText, {
+      this.addTreeLabel = this.scene.add.text(screenWidth - 360, 35, '🌲 Add Tree', {
         fontSize: '16px',
         color: '#ffffff',
         fontStyle: 'bold'
       });
-      addTreeLabel.setOrigin(0.5);
-      addTreeLabel.setDepth(52);
-      addTreeLabel.setScrollFactor(0);
+      this.addTreeLabel.setOrigin(0.5);
+      this.addTreeLabel.setDepth(52);
+      this.addTreeLabel.setScrollFactor(0);
     }
+    
+    if (onAddBuildingSpot) {
+      const addBuildingBtn = this.scene.add.rectangle(screenWidth - 360, 75, 180, 35, 0x5b3d1f, 0.9);
+      addBuildingBtn.setStrokeStyle(2, 0x2d1f0d);
+      addBuildingBtn.setDepth(51);
+      addBuildingBtn.setScrollFactor(0);
+      addBuildingBtn.setInteractive({ useHandCursor: true });
+      addBuildingBtn.on('pointerdown', () => onAddBuildingSpot());
+
+      this.addBuildingLabel = this.scene.add.text(screenWidth - 360, 75, '🏗️ Add Building', {
+        fontSize: '16px',
+        color: '#ffffff',
+        fontStyle: 'bold'
+      });
+      this.addBuildingLabel.setOrigin(0.5);
+      this.addBuildingLabel.setDepth(52);
+      this.addBuildingLabel.setScrollFactor(0);
+    }
+
+    this.updateAddButtonCosts(getTreeCost?.(), getBuildingCost?.());
+
     
     if (onAddBuildingSpot) {
       const addBuildingBtn = this.scene.add.rectangle(screenWidth - 360, 75, 180, 35, 0x5b3d1f, 0.9);
@@ -159,7 +186,20 @@ export class UIManager {
     }
   }
 
-  private showResetConfirmation(onConfirm: () => void) {
+  updateAddButtonCosts(treeCost?: number, buildingCost?: number) {
+    const treeCostValue = treeCost ?? this.treeCostProvider?.();
+    if (this.addTreeLabel) {
+      this.addTreeLabel.setText(treeCostValue ? `🌲 Add Tree (${treeCostValue}c)` : '🌲 Add Tree');
+    }
+
+    const buildingCostValue = buildingCost ?? this.buildingCostProvider?.();
+    if (this.addBuildingLabel) {
+      this.addBuildingLabel.setText(buildingCostValue ? `🏗️ Add Building (${buildingCostValue}c)` : '🏗️ Add Building');
+    }
+  }
+ 
+   private showResetConfirmation(onConfirm: () => void) {
+
     const { width, height } = this.scene.scale;
 
     // Dark overlay to block interactions behind the dialog

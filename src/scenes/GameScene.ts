@@ -523,7 +523,10 @@ export class GameScene extends Phaser.Scene {
     this.uiManager.updateCoins(this.economy.getCoins());
     this.uiManager.updateIncome(this.economy.calculateIncome());
     this.uiManager.updateBuildingCount(this.getRepairedBuildingCount());
-    // Research points removed
+    this.uiManager.updateAddButtonCosts(
+      this.getNextTreeSpotCost(),
+      this.getBuildingPlotCost(this.peekNextBuildingType())
+    );
     this.updateAffordabilityIndicators();
   }
 
