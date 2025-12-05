@@ -66,11 +66,17 @@ export class UIManager {
     this.researchPointsText.setDepth(51);
     this.researchPointsText.setScrollFactor(0);
     
-    const instructions = this.scene.add.text(screenWidth / 2, 745, 'WASD: Move | Click Tree: Get Coins | Click Buildings: Repair/Upgrade | Press R: Research | Use Add Buttons to place more', {
+    const instructionLines = [
+      'WASD: Move  |  Click Trees to collect coins  |  Click Buildings to repair/upgrade',
+      'Press R to open Research  |  Use Add buttons to place new trees/buildings'
+    ];
+
+    const instructions = this.scene.add.text(screenWidth / 2, 745, instructionLines.join('\n'), {
       fontSize: '16px',
       color: '#2d5016',
       backgroundColor: '#ffffff',
-      padding: { x: 10, y: 5 }
+      padding: { x: 10, y: 5 },
+      align: 'center'
     });
     instructions.setOrigin(0.5, 1);
     instructions.setDepth(51);
