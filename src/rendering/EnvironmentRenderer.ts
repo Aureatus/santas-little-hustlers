@@ -117,48 +117,19 @@ export class EnvironmentRenderer {
   }
  
   createSnowEffect() {
-    const farSnow = this.scene.add.particles(0, 0, 'snowflake', {
-      x: { min: 0, max: this.width },
-      y: { min: -20, max: 0 },
-      lifespan: 16000,
-      speedY: { min: 10, max: 35 },
-      speedX: { min: -15, max: 15 },
-      scale: { min: 0.1, max: 0.35 },
-      alpha: { min: 0.15, max: 0.35 },
-      rotate: { min: -10, max: 10 },
-      frequency: 120,
-      blendMode: 'SCREEN'
-    });
-    farSnow.setDepth(120);
-
-    const midSnow = this.scene.add.particles(0, 0, 'snowflake', {
-      x: { min: -100, max: this.width + 100 },
-      y: { min: -40, max: 0 },
-      lifespan: 11000,
-      speedY: { min: 35, max: 70 },
-      speedX: { min: -25, max: 25 },
-      scale: { min: 0.25, max: 0.6 },
-      alpha: { min: 0.25, max: 0.55 },
-      rotate: { min: -35, max: 35 },
-      frequency: 90,
-      blendMode: 'ADD'
-    });
-    midSnow.setDepth(150);
-
     this.snowEmitter = this.scene.add.particles(0, 0, 'snowflake', {
-      x: { min: -200, max: this.width + 200 },
-      y: { min: -50, max: 0 },
-      lifespan: 7000,
-      speedY: { min: 80, max: 140 },
-      speedX: { min: -60, max: 60 },
-      scale: { min: 0.4, max: 0.9 },
-      alpha: { min: 0.35, max: 0.85 },
-      rotate: { min: -70, max: 70 },
-      frequency: 60,
+      x: { min: 0, max: this.width },
+      y: -10,
+      lifespan: 10000,
+      speedY: { min: 20, max: 50 },
+      speedX: { min: -10, max: 10 },
+      scale: { min: 0.3, max: 0.8 },
+      alpha: { min: 0.3, max: 0.8 },
+      frequency: 200,
       blendMode: 'ADD'
     });
     
-    this.snowEmitter.setDepth(200);
+    this.snowEmitter.setDepth(100);
   }
 }
 
